@@ -2,7 +2,7 @@
     "title": "Blit",
     "name": "properjs-blit",
     "description": "A simple gamecycle engine.",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "homepage": "https://github.com/ProperJS/Blit",
     "readmeFilename": "README.md",
     "contributors": [
@@ -27,14 +27,7 @@
     ],
     "main": "Blit",
     "scripts": {
-        "prepublish": "properjs"
-    },
-    "properjs": {
-        "dependencies": ["properjs-raf"],
-        "output": "dist/Blit.js"
-    },
-    "dependencies": {
-        "properjs-raf": "~0.1"
+        "test": "webpack test/test.js test/dist/common.js ; cp Blit.js test/dist/browser.js"
     },
     "keywords": [
         "properjs",
