@@ -2,7 +2,7 @@
     "title": "Blit",
     "name": "properjs-blit",
     "description": "A simple gamecycle engine.",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "homepage": "https://github.com/ProperJS/Blit",
     "readmeFilename": "README.md",
     "contributors": [
