@@ -1,288 +1,102 @@
-/*!
- *
- * A simple gamecycle engine
- *
- * @Blit
- * @author: kitajchuk
- *
- */
-(function ( factory ) {
-    
-    if ( typeof exports === "object" && typeof module !== "undefined" ) {
-        module.exports = factory();
-
-    } else if ( typeof window !== "undefined" ) {
-        window.Blit = factory();
-    }
-    
-})(function () {
+import Controller from "properjs-controller";
 
 
-    // Animation tracking
-    var raf = window.requestAnimationFrame,
-        caf = window.cancelAnimationFrame;
-    
-    
-    /**
-     *
-     * A simple gamecycle engine
-     * @constructor Blit
-     * @requires raf
-     * @memberof! <global>
-     *
-     */
-    var Blit = function () {
-        return this.init.apply( this, arguments );
-    };
-    
-    Blit.prototype = {
-        constructor: Blit,
-        
-        /**
-         *
-         * Blit init constructor method
-         * @memberof Blit
-         * @method Blit.init
-         * @param {object} options The gamecycle options
-         * <ul>
-         * <li>{number} options.fps</li>
-         * <li>{boolean} options.paused</li>
-         * <li>{function} options.blit</li>
-         * </ul>
-         *
-         */
-        init: function ( options ) {
-            /**
-             *
-             * Time now in ms
-             * @memberof Blit
-             * @member Blit._now
-             *
-             */
-            this._now = null;
-            
-            /**
-             *
-             * Time then in ms
-             * @memberof Blit
-             * @member Blit._then
-             *
-             */
-            this._then = null;
-            
-            /**
-             *
-             * Diff between now and then
-             * @memberof Blit
-             * @member Blit._delta
-             *
-             */
-            this._delta = null;
-            
-            /**
-             *
-             * Start time in ms
-             * @memberof Blit
-             * @member Blit._first
-             *
-             */
-            this._first = null;
-            
-            /**
-             *
-             * Elapsed time in ms
-             * @memberof Blit
-             * @member Blit._time
-             *
-             */
-            this._time = null;
-            
-            /**
-             *
-             * Current frame
-             * @memberof Blit
-             * @member Blit._frame
-             *
-             */
-            this._frame = 0;
-            
-            /**
-             *
-             * Timeout reference
-             * @memberof Blit
-             * @member Blit._timeout
-             *
-             */
-            this._cycle = null;
-            
-            /**
-             *
-             * Started iteration flag
-             * @memberof Blit
-             * @member Blit._started
-             *
-             */
-            this._started = false;
-            
-            /**
-             *
-             * FPS defaults to 60fps
-             * @memberof Blit
-             * @member Blit._fps
-             *
-             */
-            this._fps = (options.fps || 60);
-            
-            /**
-             *
-             * Timer interval based on FPS
-             * @memberof Blit
-             * @member Blit._interval
-             *
-             */
-            this._interval = (1000 / this._fps);
-            
-            /**
-             *
-             * Frame rate callback
-             * @memberof Blit
-             * @member Blit._blit
-             *
-             */
-            this._blit = (options.blit || null);
-            
-            /**
-             *
-             * Paused flag
-             * @memberof Blit
-             * @member Blit._paused
-             *
-             */
-            this._paused = (options.paused || false);
-            
-            // Start if we can
-            if ( !this._started && !this._paused ) {
-                this.start();
-            }
-        },
-        
-        /**
-         *
-         * Apply the blit callback
-         * @memberof Blit
-         * @method Blit.blit
-         * @param {function} fn The callback to fire
-         *
-         */
-        blit: function ( fn ) {
-            if ( typeof fn === "function" ) {
-                this._blit = fn;
-            }
-            
-            return this;
-        },
-        
-        /**
-         *
-         * Pause the gamecycle
-         * @memberof Blit
-         * @method Blit.pause
-         *
-         */
-        pause: function () {
-            this._paused = true;
-            
-            return this;
-        },
-        
-        /**
-         *
-         * Play the gamecycle
-         * @memberof Blit
-         * @method Blit.play
-         *
-         */
-        play: function () {
-            this._paused = false;
-            
-            return this;
-        },
-        
-        /**
-         *
-         * Start the gamecycle
-         * @memberof Blit
-         * @method Blit.start
-         *
-         */
-        start: function () {
-            if ( this._started ) {
-                return this;
-            }
-            
-            this._paused = false;
-            this._blitInit();
-            
-            return this;
-        },
-        
-        /**
-         *
-         * Stop the gamecycle
-         * @memberof Blit
-         * @method Blit.stop
-         *
-         */
-        stop: function () {
-            caf( this._cycle );
-            
-            this._started = false;
-            this._cycle = null;
-            
-            return this;
-        },
-        
-        /**
-         *
-         * Initialize the gamecycle loop
-         * @memberof Blit
-         * @method Blit._blitInit
-         *
-         */
-        _blitInit: function () {
-            if ( this._started ) {
-                return this;
-            }
-            
-            this._started = true;
-            this._then = Date.now();
-            this._first = this._then;
-            
-            var self = this,
-                blit = function () {
-                    self._cycle = raf( blit );
-                    self._now = Date.now();
-                    self._delta = self._now - self._then;
-                    
-                    if ( self._delta > self._interval ) {
-                        if ( !self._paused ) {
-                            self._frame++;
-                            self._then = self._now - (self._delta % self._interval);
-                            self._time = (self._then - self._first);
-                            
-                            if ( typeof self._blit === "function" ) {
-                                self._blit( self._frame );
-                            }
-                        }
-                    }
-                };
-            
-            blit();
+
+const raf = window.requestAnimationFrame;
+const caf = window.cancelAnimationFrame;
+
+
+
+export default class Blit extends Controller {
+    constructor ( options ) {
+        super();
+
+        this._now = null;
+        this._then = null;
+        this._delta = null;
+        this._first = null;
+        this._time = null;
+        this._frame = 0;
+        this._cycle = null;
+        this._started = false;
+        this._fps = (options.fps || 60);
+        this._interval = (1000 / this._fps);
+        this._blit = (options.blit || null);
+        this._paused = (options.paused || false);
+
+        // Start if we can
+        if ( !this._started && !this._paused ) {
+            this.start();
         }
-    };
-    
-    
-    return Blit;
+    }
 
+    blit ( fn ) {
+        if ( typeof fn === "function" ) {
+            this._blit = fn;
+        }
 
-});
+        return this;
+    }
+
+    pause () {
+        this._paused = true;
+
+        return this;
+    }
+
+    play () {
+        this._paused = false;
+
+        return this;
+    }
+
+    start () {
+        if ( this._started ) {
+            return this;
+        }
+
+        this._paused = false;
+        this.blitInit();
+
+        return this;
+    }
+
+    stop () {
+        caf( this._cycle );
+
+        this._started = false;
+        this._cycle = null;
+
+        return this;
+    }
+
+    blitInit () {
+        if ( this._started ) {
+            return this;
+        }
+
+        this._started = true;
+        this._then = Date.now();
+        this._first = this._then;
+
+        const blit = () => {
+            this._cycle = raf( blit );
+            this._now = Date.now();
+            this._delta = this._now - this._then;
+
+            if ( this._delta > this._interval ) {
+                if ( !this._paused ) {
+                    this._frame++;
+                    this._then = this._now - (this._delta % this._interval);
+                    this._time = (this._then - this._first);
+
+                    if ( typeof this._blit === "function" ) {
+                        this._blit( this._frame );
+                    }
+                }
+            }
+        };
+
+        blit();
+    }
+}

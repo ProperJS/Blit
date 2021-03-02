@@ -7,22 +7,22 @@
  *
  */
 (function ( factory ) {
-    
+
     if ( typeof exports === "object" && typeof module !== "undefined" ) {
         module.exports = factory();
 
     } else if ( typeof window !== "undefined" ) {
         window.Blit = factory();
     }
-    
+
 })(function () {
 
 
     // Animation tracking
     var raf = window.requestAnimationFrame,
         caf = window.cancelAnimationFrame;
-    
-    
+
+
     /**
      *
      * A simple gamecycle engine
@@ -34,10 +34,10 @@
     var Blit = function () {
         return this.init.apply( this, arguments );
     };
-    
+
     Blit.prototype = {
         constructor: Blit,
-        
+
         /**
          *
          * Blit init constructor method
@@ -60,7 +60,7 @@
              *
              */
             this._now = null;
-            
+
             /**
              *
              * Time then in ms
@@ -69,7 +69,7 @@
              *
              */
             this._then = null;
-            
+
             /**
              *
              * Diff between now and then
@@ -78,7 +78,7 @@
              *
              */
             this._delta = null;
-            
+
             /**
              *
              * Start time in ms
@@ -87,7 +87,7 @@
              *
              */
             this._first = null;
-            
+
             /**
              *
              * Elapsed time in ms
@@ -96,7 +96,7 @@
              *
              */
             this._time = null;
-            
+
             /**
              *
              * Current frame
@@ -105,7 +105,7 @@
              *
              */
             this._frame = 0;
-            
+
             /**
              *
              * Timeout reference
@@ -114,7 +114,7 @@
              *
              */
             this._cycle = null;
-            
+
             /**
              *
              * Started iteration flag
@@ -123,7 +123,7 @@
              *
              */
             this._started = false;
-            
+
             /**
              *
              * FPS defaults to 60fps
@@ -132,7 +132,7 @@
              *
              */
             this._fps = (options.fps || 60);
-            
+
             /**
              *
              * Timer interval based on FPS
@@ -141,7 +141,7 @@
              *
              */
             this._interval = (1000 / this._fps);
-            
+
             /**
              *
              * Frame rate callback
@@ -150,7 +150,7 @@
              *
              */
             this._blit = (options.blit || null);
-            
+
             /**
              *
              * Paused flag
@@ -159,13 +159,13 @@
              *
              */
             this._paused = (options.paused || false);
-            
+
             // Start if we can
             if ( !this._started && !this._paused ) {
                 this.start();
             }
         },
-        
+
         /**
          *
          * Apply the blit callback
@@ -178,10 +178,10 @@
             if ( typeof fn === "function" ) {
                 this._blit = fn;
             }
-            
+
             return this;
         },
-        
+
         /**
          *
          * Pause the gamecycle
@@ -191,10 +191,10 @@
          */
         pause: function () {
             this._paused = true;
-            
+
             return this;
         },
-        
+
         /**
          *
          * Play the gamecycle
@@ -204,10 +204,10 @@
          */
         play: function () {
             this._paused = false;
-            
+
             return this;
         },
-        
+
         /**
          *
          * Start the gamecycle
@@ -219,13 +219,13 @@
             if ( this._started ) {
                 return this;
             }
-            
+
             this._paused = false;
             this._blitInit();
-            
+
             return this;
         },
-        
+
         /**
          *
          * Stop the gamecycle
@@ -235,13 +235,13 @@
          */
         stop: function () {
             caf( this._cycle );
-            
+
             this._started = false;
             this._cycle = null;
-            
+
             return this;
         },
-        
+
         /**
          *
          * Initialize the gamecycle loop
@@ -253,35 +253,35 @@
             if ( this._started ) {
                 return this;
             }
-            
+
             this._started = true;
             this._then = Date.now();
             this._first = this._then;
-            
+
             var self = this,
                 blit = function () {
                     self._cycle = raf( blit );
                     self._now = Date.now();
                     self._delta = self._now - self._then;
-                    
+
                     if ( self._delta > self._interval ) {
                         if ( !self._paused ) {
                             self._frame++;
                             self._then = self._now - (self._delta % self._interval);
                             self._time = (self._then - self._first);
-                            
+
                             if ( typeof self._blit === "function" ) {
                                 self._blit( self._frame );
                             }
                         }
                     }
                 };
-            
+
             blit();
         }
     };
-    
-    
+
+
     return Blit;
 
 

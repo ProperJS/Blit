@@ -1,46 +1,60 @@
-Blit
-====
+ProperJS // Blit
+================
 
 > A simple gamecycle engine.
 
 
 
-## Installation
+### Installation
 
 ```shell
-npm install properjs-blit --save-dev
+npm i properjs-blit --save-dev
 ```
 
 
-## Usage
-
+### Usage
+An example of using `Blit` to sequence an animation on a Javascript canvas:
 ```javascript
-var Blit = require( "properjs-blit" );
+import Blit from "properjs-blit";
+const images = [
+    "https://www.kitajchuk.com/assets/img/kickflip/kickflip_01.png",
+    "https://www.kitajchuk.com/assets/img/kickflip/kickflip_02.png",
+    ..., // Imagine there are many images (see test script/html for full reference)
+].map(( url ) => {
+    const img = new Image();
 
-var blit = new Blit({
-    // Default is 60
-    fps: 60,
-    
-    // Default is true
-    paused: true,
-    
-    // Handle blits
-    blit: function ( f ) {
-        // Do stuff here
-        // f === current frame number
-    }
-    
-}).start();
+    img.src = url;
+    img.onload = () => {
+        console.log( `Loaded image node ${url}` );
+    };
 
-// Or you can chain the blits
-var blit = new Blit().blit(function ( f ) {
-    // Do stuff here
-    // f === current frame number
+    return img;
+});
+const blit = new Blit({
+  paused: true,
+  fps: 24,
+});
+const canvas = document.getElementById( "canvas" );
+const drawImage = ( img ) => {
+    const context = canvas.getContext( "2d" );
 
-}).start();
+    context.drawImage(
+        img,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+};
 
-// Also
-blit.pause();
-blit.play();
-blit.stop();
+blit.blit(( f ) => {
+    const frame = (f % images.length);
+
+    drawImage( images[frame] );
+
+}).start().play();
 ```
