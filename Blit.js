@@ -1,16 +1,5 @@
-import Controller from "properjs-controller";
-
-
-
-const raf = window.requestAnimationFrame;
-const caf = window.cancelAnimationFrame;
-
-
-
-export default class Blit extends Controller {
+export default class Blit {
     constructor ( options ) {
-        super();
-
         this._now = null;
         this._then = null;
         this._delta = null;
@@ -62,7 +51,7 @@ export default class Blit extends Controller {
     }
 
     stop () {
-        caf( this._cycle );
+      window.cancelAnimationFrame( this._cycle );
 
         this._started = false;
         this._cycle = null;
@@ -80,7 +69,7 @@ export default class Blit extends Controller {
         this._first = this._then;
 
         const blit = () => {
-            this._cycle = raf( blit );
+            this._cycle = window.requestAnimationFrame( blit );
             this._now = Date.now();
             this._delta = this._now - this._then;
 
@@ -97,6 +86,6 @@ export default class Blit extends Controller {
             }
         };
 
-        blit();
+        this._cycle = window.requestAnimationFrame( blit );
     }
 }

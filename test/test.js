@@ -48,7 +48,7 @@ const images = [
 
     img.src = url;
     img.onload = () => {
-        console.log( `Loaded image node ${url}` );
+        // console.log( `Loaded image node ${url}` );
     };
 
     return img;

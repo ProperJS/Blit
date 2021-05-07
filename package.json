@@ -2,7 +2,7 @@
     "title": "Blit",
     "name": "properjs-blit",
     "description": "A simple gamecycle engine.",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "homepage": "https://github.com/ProperJS/Blit",
     "readmeFilename": "README.md",
     "contributors": [
@@ -37,9 +37,6 @@
         "gamecycle",
         "blit"
     ],
-    "dependencies": {
-        "properjs-controller": ">=0.3.0"
-    },
     "devDependencies": {
         "@babel/cli": "^7.8.4",
         "@babel/core": "^7.9.0",
